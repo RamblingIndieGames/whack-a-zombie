@@ -36,3 +36,9 @@ The diagram below shows how the game will flow from one scene to the next.
 The diagram below shows the high level architecture of each scene of the game.
 
 ![Scene Tree](docs/scene-tree.png)
+
+## Coding
+
+You should read through the [Coding Patterns](./docs/patterns.md) document.
+
+Coding Conventions will be detailed in the docs directory in the near future.
