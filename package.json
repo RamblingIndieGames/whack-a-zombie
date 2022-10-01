@@ -1,0 +1,16 @@
+{
+  "name": "whack-a-zombie",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "repository": "git@github.com:RamblingIndieGames/whack-a-zombie.git",
+  "author": "Richard Marks <ccpsceo@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "prettier": "^2.7.1"
+  },
+  "scripts": {
+    "start": "http-server src/ -p 3131"
+  }
+}
