@@ -50,6 +50,45 @@ const Texture = {
     return texture.symbol === Texture.symbol;
   },
 };
+
+const ColorFillRenderNode = {
+  symbol: Symbol("ColorFillRenderNode"),
+  create(rect, color) {
+    const nodeId = createUniqueId();
+    let fillColor = color;
+    const renderNode = {
+      get symbol() {
+        return ColorFillRenderNode.symbol;
+      },
+      get id() {
+        return nodeId;
+      },
+      get type() {
+        return NODE_TYPES.RenderNode;
+      },
+      get subtype() {
+        return "ColorFill";
+      },
+      get rect() {
+        return rect;
+      },
+      get color() {
+        return fillColor;
+      },
+      set color(newColor) {
+        fillColor = newColor;
+      },
+      render() {
+        console.log("ColorFillRenderNode.render", { rect, color });
+      },
+    };
+    return renderNode;
+  },
+  isColorFillRenderNode(node) {
+    return node.symbol === ColorFillRenderNode.symbol;
+  },
+};
+
 // Instance Creation Functions
 function createRect(
   { x, y, width, height } = { x: 0, y: 0, width: 0, height: 0 },
