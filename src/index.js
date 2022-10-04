@@ -1,5 +1,7 @@
 // Imports
 // Constant Declarations
+const SCREEN_WIDTH = 800;
+const SCREEN_HEIGHT = 600;
 
 const NODE_TYPES = {
   RenderNode: "RenderNode",
