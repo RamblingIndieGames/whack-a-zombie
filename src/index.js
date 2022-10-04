@@ -61,6 +61,21 @@ function createRect(
   const instance = Rect.create(x, y, width, height);
   return instance;
 }
+
+function createTexture({ width, height, pixels, image }) {
+  assert(typeof width !== "number", "width must be a Number");
+  assert(typeof height !== "number", "height must be a Number");
+  assert(
+    !(pixels instanceof Uint8ClampedArray),
+    "pixels must be a Uint8ClampedArray",
+  );
+  assert(
+    !(image instanceof HTMLImageElement),
+    "image must be an HTMLImageElement",
+  );
+  const instance = Texture.create(width, height, pixels, image);
+  return instance;
+}
 // Libraries
 // Global State
 // Global Functions
