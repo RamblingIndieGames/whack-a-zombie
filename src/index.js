@@ -1,5 +1,11 @@
 // Imports
 // Constant Declarations
+
+const NODE_TYPES = {
+  RenderNode: "RenderNode",
+  UINode: "UINode",
+};
+
 // Class Types
 const Rect = {
   symbol: Symbol("Rect"),
