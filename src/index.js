@@ -123,6 +123,41 @@ const ImageRenderNode = {
     return node.symbol === ImageRenderNode.symbol;
   },
 };
+
+const ClickableUINode = {
+  symbol: Symbol("ClickableUINode"),
+  create(rect, onClick) {
+    const nodeId = createUniqueId();
+    const uiNode = {
+      get symbol() {
+        return ClickableUINode.symbol;
+      },
+      get id() {
+        return nodeId;
+      },
+      get type() {
+        return NODE_TYPES.UINode;
+      },
+      get subtype() {
+        return "Clickable";
+      },
+      get rect() {
+        return rect;
+      },
+      render() {
+        console.log("ClickableUINode.render", { rect });
+      },
+      update() {
+        // console.log("ClickableUINode.update", { rect });
+      },
+    };
+    return uiNode;
+  },
+  isClickableUINode(node) {
+    return node.symbol === ClickableUINode.symbol;
+  },
+};
+
 // Instance Creation Functions
 function createRect(
   { x, y, width, height } = { x: 0, y: 0, width: 0, height: 0 },
