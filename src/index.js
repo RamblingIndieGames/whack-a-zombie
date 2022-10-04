@@ -215,6 +215,7 @@ function createClickableUINode({ rect, onClick }) {
 }
 
 // Libraries
+
 // Global State
 const state = {
   scene: [],
@@ -467,10 +468,65 @@ async function loadTexture({ name, source }) {
   }
 }
 
+async function setupSplashScene() {
+  console.log("setup splash scene");
+  const splashBackgroundTexture = await loadTexture({
+    name: "splash-background",
+    source: "content/textures/splash-background.png",
+  });
+
+  addTextureToContent(splashBackgroundTexture);
+
+  const backgroundColor = "#369";
+  const backgroundColorFillSceneNode = addToScene(
+    createColorFillRenderNode({
+      rect: createRect({
+        x: 0,
+        y: 0,
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT,
+      }),
+      color: backgroundColor,
+    }),
+  );
+
+  const backgroundImageSceneNode = addToScene(
+    createImageRenderNode({
+      rect: createRect(),
+      texture: getTextureFromContent("splash-background"),
+    }),
+  );
+
+  const clickableSceneNode = addToScene(
+    createClickableUINode({
+      rect: createRect({
+        x: 0,
+        y: 0,
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT,
+      }),
+      async onClick() {
+        removeFromScene(clickableSceneNode.id);
+        removeFromScene(backgroundImageSceneNode.id);
+        removeFromScene(backgroundColorFillSceneNode.id);
+        removeTextureFromContent("splash-background");
+        await setupTitleScene();
+      },
+    }),
+  );
+}
+
+async function setupTitleScene() {
+  console.log("TODO - setup title scene");
+}
+
 // Entry Point Function
 async function main() {
   console.log("Whack A Zombie - Starting");
+  await setupSplashScene();
+  mainLoop();
 }
+
 // Entry Point Call
 main().catch((err) => {
   console.error(err.message);
