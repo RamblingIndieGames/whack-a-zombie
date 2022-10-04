@@ -198,6 +198,14 @@ function createImageRenderNode({ rect, texture }) {
   const instance = ImageRenderNode.create(rect, texture);
   return instance;
 }
+
+function createClickableUINode({ rect, onClick }) {
+  assert(!Rect.isRect(rect), "rect must be a Rect");
+  assert(typeof onClick !== "function", "onClick must be a Function");
+  const instance = ClickableUINode.create(rect, onClick);
+  return instance;
+}
+
 // Libraries
 // Global State
 // Global Functions
