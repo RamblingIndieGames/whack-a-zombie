@@ -414,6 +414,59 @@ function mainLoop() {
   console.log({ state });
   // window.requestAnimationFrame(mainLoop);
 }
+
+function getImageDataFromImage(image) {
+  const temporaryCanvas = document.createElement("canvas");
+  temporaryCanvas.width = image.naturalWidth;
+  temporaryCanvas.height = image.naturalHeight;
+  const temporaryCanvasContext = temporaryCanvas.getContext("2d");
+  temporaryCanvasContext.drawImage(image, 0, 0);
+  const imageData = temporaryCanvasContext.getImageData(
+    0,
+    0,
+    temporaryCanvas.width,
+    temporaryCanvas.height,
+  );
+  return imageData;
+}
+
+function createTextureFromImage(image) {
+  const textureWidth = image.naturalWidth;
+  const textureHeight = image.naturalHeight;
+  const textureImageData = getImageDataFromImage(image);
+  const texturePixels = textureImageData.data;
+  const texture = createTexture({
+    width: textureWidth,
+    height: textureHeight,
+    pixels: texturePixels,
+    image,
+  });
+  return texture;
+}
+
+async function loadTexture({ name, source }) {
+  console.log("loadTexture", name, source);
+  try {
+    const texture = await new Promise((resolve, reject) => {
+      const image = new Image();
+      image.dataset.name = name;
+      image.onerror = (err) => {
+        reject(new Error(err.message));
+      };
+      image.onload = () => {
+        const texture = createTextureFromImage(image);
+        resolve(texture);
+      };
+      image.src = source;
+    });
+    return texture;
+  } catch (err) {
+    throw new Error(
+      `loadTexture: Unable to load texture "${name}" from "${source}": ${err.message}`,
+    );
+  }
+}
+
 // Entry Point Function
 async function main() {
   console.log("Whack A Zombie - Starting");
