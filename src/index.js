@@ -19,6 +19,37 @@ const Rect = {
     return rect.symbol === Rect.symbol;
   },
 };
+
+const Texture = {
+  symbol: Symbol("Texture"),
+  create(width, height, pixels, image) {
+    const textureId = createUniqueId();
+    const texture = {
+      get symbol() {
+        return Texture.symbol;
+      },
+      get id() {
+        return textureId;
+      },
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get pixels() {
+        return pixels;
+      },
+      get image() {
+        return image;
+      },
+    };
+    return texture;
+  },
+  isTexture(texture) {
+    return texture.symbol === Texture.symbol;
+  },
+};
 // Instance Creation Functions
 function createRect(
   { x, y, width, height } = { x: 0, y: 0, width: 0, height: 0 },
