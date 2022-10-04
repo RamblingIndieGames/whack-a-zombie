@@ -156,6 +156,13 @@ function createColorFillRenderNode({ rect, color }) {
   const instance = ColorFillRenderNode.create(rect, color);
   return instance;
 }
+
+function createImageRenderNode({ rect, texture }) {
+  assert(!Rect.isRect(rect), "rect must be a Rect");
+  assert(!Texture.isTexture(texture), "texture must be a Texture");
+  const instance = ImageRenderNode.create(rect, texture);
+  return instance;
+}
 // Libraries
 // Global State
 // Global Functions
