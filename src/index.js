@@ -404,6 +404,16 @@ function processGameTime() {
   state.lastTime = currentTime;
 }
 
+function mainLoop() {
+  processGameTime();
+  processScene();
+  renderScene();
+
+  // TODO: uncomment this after the renderer is implemented
+  // for now, just log the state for inspecting that things are working
+  console.log({ state });
+  // window.requestAnimationFrame(mainLoop);
+}
 // Entry Point Function
 async function main() {
   console.log("Whack A Zombie - Starting");
