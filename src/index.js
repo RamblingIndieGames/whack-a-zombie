@@ -243,6 +243,26 @@ function getTextureFromContent(textureName) {
     : null;
 }
 
+function createUniqueId() {
+  if (createUniqueId._value === undefined) {
+    createUniqueId._value = 1;
+    createUniqueId._next = () => {
+      const v0 = createUniqueId._value++;
+      const v1 = v0 << 24;
+      const v2 = v1 + ~~(Math.random() * 0xffffff);
+      const v3 = ~~(Math.random() * 0xffffff);
+      const v4 = v3 >> 16;
+      const v5 = [v3, v4, v2]
+        .map((value) => {
+          const hex = value.toString(16);
+          return `00000000${hex}`.slice(-8);
+        })
+        .join("1");
+      return v5.match(/.{1,6}/g).join("");
+    };
+  }
+  return createUniqueId._next();
+}
 // Entry Point Function
 async function main() {
   console.log("Whack A Zombie - Starting");
