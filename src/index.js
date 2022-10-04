@@ -321,6 +321,89 @@ function synchronizeScene() {
   addEnteringSceneNodesToScene();
 }
 
+function sortSceneNodesByPriority() {
+  state.scene.sort((a, b) => {
+    const aPriority = a.priority || 0;
+    const bPriority = b.priority || 0;
+    return aPriority - bPriority;
+  });
+}
+
+function sortSceneNodesByLayer() {
+  state.scene.sort((a, b) => {
+    const aLayer = a.layer || 0;
+    const bLayer = b.layer || 0;
+    return aLayer - bLayer;
+  });
+}
+
+function methodOfSceneNodeOrNoop(methodName, sceneNode) {
+  return methodName in sceneNode &&
+    typeof sceneNode[methodName] === "function"
+    ? sceneNode[methodName]
+    : () => {};
+}
+
+function callMethodForEachSceneNode(methodName, sceneNodes) {
+  const count = sceneNodes.length;
+  for (let i = 0; i < count; i++) {
+    const sceneNode = sceneNodes[i];
+    const methodImplementation = methodOfSceneNodeOrNoop(
+      methodName,
+      sceneNode,
+    );
+    methodImplementation();
+  }
+}
+
+function getEnabledSceneNodes() {
+  return state.scene.filter((sceneNode) =>
+    "enabled" in sceneNode ? Boolean(sceneNode.enabled) : true,
+  );
+}
+
+function getVisibleSceneNodes() {
+  return state.scene.filter((sceneNode) =>
+    "visible" in sceneNode ? Boolean(sceneNode.visible) : false,
+  );
+}
+
+function updateEnabledSceneNodes() {
+  sortSceneNodesByPriority();
+  callMethodForEachSceneNode("update", getEnabledSceneNodes());
+}
+
+function renderVisibleSceneNodes() {
+  sortSceneNodesByLayer();
+  callMethodForEachSceneNode("render", getVisibleSceneNodes());
+}
+
+function clearNextRenderScene() {
+  state.nextRenderScene = [];
+}
+
+function copyNextRenderSceneToCurrentRenderScene() {
+  state.renderScene = [...state.nextRenderScene];
+}
+
+function renderScene() {
+  clearNextRenderScene();
+  renderVisibleSceneNodes();
+  copyNextRenderSceneToCurrentRenderScene();
+}
+
+function processScene() {
+  synchronizeScene();
+  updateEnabledSceneNodes();
+}
+
+function processGameTime() {
+  const currentTime = new Date().getTime();
+  state.deltaTime = (currentTime - state.lastTime) * 0.001;
+  state.elapsedTime += state.deltaTime;
+  state.lastTime = currentTime;
+}
+
 // Entry Point Function
 async function main() {
   console.log("Whack A Zombie - Starting");
