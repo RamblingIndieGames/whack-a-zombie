@@ -89,6 +89,40 @@ const ColorFillRenderNode = {
   },
 };
 
+const ImageRenderNode = {
+  symbol: Symbol("ImageRenderNode"),
+  create(rect, texture) {
+    const nodeId = createUniqueId();
+    const renderNode = {
+      // visible: true,
+      get symbol() {
+        return ImageRenderNode.symbol;
+      },
+      get id() {
+        return nodeId;
+      },
+      get type() {
+        return NODE_TYPES.RenderNode;
+      },
+      get subtype() {
+        return "Image";
+      },
+      get rect() {
+        return rect;
+      },
+      get texture() {
+        return texture;
+      },
+      render() {
+        console.log("ImageRenderNode.render", { rect, texture });
+      },
+    };
+    return renderNode;
+  },
+  isImageRenderNode(node) {
+    return node.symbol === ImageRenderNode.symbol;
+  },
+};
 // Instance Creation Functions
 function createRect(
   { x, y, width, height } = { x: 0, y: 0, width: 0, height: 0 },
