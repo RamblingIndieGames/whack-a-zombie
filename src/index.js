@@ -216,6 +216,16 @@ function createClickableUINode({ rect, onClick }) {
 
 // Libraries
 // Global State
+const state = {
+  scene: [],
+  enteringScene: [],
+  exitingScene: [],
+  lastTime: new Date().getTime(),
+  elapsedTime: 0,
+  deltaTime: 0,
+  renderScene: [],
+  nextRenderScene: [],
+};
 
 const content = {
   textures: {},
