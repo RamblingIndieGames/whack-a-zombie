@@ -216,12 +216,33 @@ function createClickableUINode({ rect, onClick }) {
 
 // Libraries
 // Global State
+
+const content = {
+  textures: {},
+};
+
 // Global Functions
 function assert(condition, message) {
   if (condition) {
     throw new Error(message);
   }
 }
+
+function addTextureToContent(texture) {
+  const textureName = texture.image.dataset.name;
+  content.textures[textureName] = texture;
+}
+
+function removeTextureFromContent(textureName) {
+  delete content.textures[textureName];
+}
+
+function getTextureFromContent(textureName) {
+  return textureName in content.textures
+    ? content.textures[textureName]
+    : null;
+}
+
 // Entry Point Function
 async function main() {
   console.log("Whack A Zombie - Starting");
