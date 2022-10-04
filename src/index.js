@@ -273,6 +273,54 @@ function createUniqueId() {
   }
   return createUniqueId._next();
 }
+
+function addToScene(data, { priority = 0, layer = 0 } = {}) {
+  const sceneNodeId = createUniqueId();
+  const sceneData = { ...data };
+  if (sceneData.id) {
+    sceneData._dataId = sceneData.id;
+    delete sceneData.id;
+  }
+  const sceneNode = {
+    get id() {
+      return sceneNodeId;
+    },
+    ...sceneData,
+    priority,
+    layer,
+  };
+  state.enteringScene.push(sceneNode);
+  return sceneNode;
+}
+
+function removeFromScene(id) {
+  const sceneNode = state.scene.find((node) => node.id === id);
+  if (sceneNode) {
+    state.exitingScene.push(sceneNode);
+  }
+}
+
+function clearExitingSceneNodesFromScene() {
+  const exitingSceneNodeIds = state.exitingScene.reduce(
+    (ids, sceneNode) => [...ids, sceneNode.id],
+    [],
+  );
+  state.scene = state.scene.filter(
+    (sceneNode) => !exitingSceneNodeIds.includes(sceneNode.id),
+  );
+  state.exitingScene = [];
+}
+
+function addEnteringSceneNodesToScene() {
+  state.scene = [...state.scene, ...state.enteringScene];
+  state.enteringScene = [];
+}
+
+function synchronizeScene() {
+  clearExitingSceneNodesFromScene();
+  addEnteringSceneNodesToScene();
+}
+
 // Entry Point Function
 async function main() {
   console.log("Whack A Zombie - Starting");
