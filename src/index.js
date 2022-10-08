@@ -344,8 +344,6 @@ const state = {
   lastTime: new Date().getTime(),
   elapsedTime: 0,
   deltaTime: 0,
-  renderScene: [],
-  nextRenderScene: [],
 };
 
 const content = {
@@ -532,27 +530,16 @@ function getVisibleSceneNodes() {
 }
 
 function updateEnabledSceneNodes() {
-  sortSceneNodesByPriority();
-  callMethodForEachSceneNode("update", getEnabledSceneNodes());
-}
-
-function renderVisibleSceneNodes() {
-  sortSceneNodesByLayer();
-  callMethodForEachSceneNode("render", getVisibleSceneNodes());
-}
-
-function clearNextRenderScene() {
-  state.nextRenderScene = [];
-}
-
-function copyNextRenderSceneToCurrentRenderScene() {
-  state.renderScene = [...state.nextRenderScene];
+  callMethodForEachSceneNode(
+    "update",
+    sortSceneNodesByPriority(getEnabledSceneNodes()),
+  );
 }
 
 function renderScene() {
-  clearNextRenderScene();
-  renderVisibleSceneNodes();
-  copyNextRenderSceneToCurrentRenderScene();
+  state.renderer.render(
+    sortSceneNodesByLayer(getVisibleSceneNodes()),
+  );
 }
 
 function processScene() {
@@ -630,6 +617,66 @@ async function loadTexture({ name, source }) {
   }
 }
 
+function groupRenderNodesByLayer(renderNodes) {
+  const nodesByLayer = {};
+  const nodeCount = renderNodes.length;
+  for (let i = 0; i < nodeCount; i++) {
+    const renderNode = renderNodes[i];
+    const renderNodeLayer = renderNode.layer || DEFAULT_NODE_LAYER;
+    if (!(renderNodeLayer in nodesByLayer)) {
+      nodesByLayer[renderNodeLayer] = [];
+    }
+    nodesByLayer[renderNodeLayer].push(renderNode);
+  }
+  return nodesByLayer;
+}
+
+function batchRenderNodes(renderNodes) {
+  /*
+    input: list of render nodes
+
+    [
+      rendernode: image      layer 1,
+      rendernode: colorfill  layer 0,
+      rendernode: image      layer 1,
+      rendernode: image      layer 1,
+      rendernode: colorfill  layer 2,
+    ]
+
+    output:
+
+    drawBatches = [
+      { batchIndex: 0, renderIndex: 0, input: [colorfill layer 0] },
+      { batchIndex: 1, renderIndex: 1, input: [image layer 1, image layer 1, image layer 1,] },
+      { batchIndex: 2, renderIndex: 4, input: [colorfill layer 2] },
+    ]
+
+  */
+  let renderIndex = 0;
+  const nodesByLayer = groupRenderNodesByLayer(renderNodes);
+  return Object.keys(nodesByLayer).reduce(
+    (drawBatches, renderNodeLayer) => {
+      const input = nodesByLayer[renderNodeLayer];
+      const batch = {
+        batchIndex: drawBatches.length,
+        renderIndex: renderIndex + input.length,
+        input,
+      };
+      return [...drawBatches, batch];
+    },
+    [],
+  );
+}
+
+async function setupRenderer() {
+  const renderer = createDoubleBufferedCanvasRenderer({
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+  });
+  state.renderer = renderer;
+  document.getElementById("game").appendChild(renderer.primaryCanvas);
+}
+
 async function setupSplashScene() {
   console.log("setup splash scene");
   const splashBackgroundTexture = await loadTexture({
@@ -685,6 +732,7 @@ async function setupTitleScene() {
 // Entry Point Function
 async function main() {
   console.log("Whack A Zombie - Starting");
+  await setupRenderer();
   await setupSplashScene();
   mainLoop();
 }
