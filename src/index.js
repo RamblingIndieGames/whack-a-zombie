@@ -444,6 +444,23 @@ function synchronizeScene() {
   addEnteringSceneNodesToScene();
 }
 
+function sortByProperty(property, defaultPropertyValue) {
+  return function sortByUserDefinedProperty(a, b) {
+    const aValue = a[property] || defaultPropertyValue;
+    const bValue = b[property] || defaultPropertyValue;
+    return aValue - bValue;
+  };
+}
+
+function sortNodes(nodes, comparator) {
+  assert(!Array.isArray(nodes), "nodes must be an Array");
+  assert(
+    typeof comparator !== "function",
+    "comparator must be a Function",
+  );
+  nodes.sort(comparator);
+  return nodes;
+}
 
 function setCacheValueIfNotSetElseGetCachedValue(
   cacheKey,
@@ -455,14 +472,32 @@ function setCacheValueIfNotSetElseGetCachedValue(
   return cache[cacheKey];
 }
 
+function sortSceneNodesByPriority(sceneNodes) {
+  if (sceneNodes === undefined) {
+    sceneNodes = state.scene;
+  }
+  assert(!Array.isArray(sceneNodes), "sceneNodes must be an Array");
+  return sortNodes(
+    sceneNodes,
+    setCacheValueIfNotSetElseGetCachedValue(
+      "sortByPriorityProperty",
+      sortByProperty("priority", DEFAULT_NODE_PRIORITY),
+    ),
+  );
 }
 
-function sortSceneNodesByLayer() {
-  state.scene.sort((a, b) => {
-    const aLayer = a.layer || 0;
-    const bLayer = b.layer || 0;
-    return aLayer - bLayer;
-  });
+function sortSceneNodesByLayer(sceneNodes) {
+  if (sceneNodes === undefined) {
+    sceneNodes = state.scene;
+  }
+  assert(!Array.isArray(sceneNodes), "sceneNodes must be an Array");
+  return sortNodes(
+    sceneNodes,
+    setCacheValueIfNotSetElseGetCachedValue(
+      "sortByLayerProperty",
+      sortByProperty("layer", DEFAULT_NODE_LAYER),
+    ),
+  );
 }
 
 function methodOfSceneNodeOrNoop(methodName, sceneNode) {
