@@ -197,24 +197,30 @@ function createTexture({ width, height, pixels, image }) {
   return instance;
 }
 
-function createColorFillRenderNode({ rect, color }) {
+function createColorFillRenderNode({ rect, color, ...other }) {
   assert(!Rect.isRect(rect), "rect must be a Rect");
   assert(typeof color !== "string", "color must be a string");
   const instance = ColorFillRenderNode.create(rect, color);
+  Object.assign(instance, other);
   return instance;
 }
 
-function createImageRenderNode({ rect, texture }) {
+function createImageRenderNode({ rect, texture, ...other }) {
   assert(!Rect.isRect(rect), "rect must be a Rect");
   assert(!Texture.isTexture(texture), "texture must be a Texture");
   const instance = ImageRenderNode.create(rect, texture);
+  Object.assign(instance, other);
   return instance;
 }
 
-function createClickableUINode({ rect, onClick }) {
+function createClickableUINode({ rect, onClick, ...other }) {
   assert(!Rect.isRect(rect), "rect must be a Rect");
   assert(typeof onClick !== "function", "onClick must be a Function");
   const instance = ClickableUINode.create(rect, onClick);
+  Object.assign(instance, other);
+  return instance;
+}
+
   return instance;
 }
 
