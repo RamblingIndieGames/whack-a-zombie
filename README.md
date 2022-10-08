@@ -37,6 +37,10 @@ The diagram below shows the high level architecture of each scene of the game.
 
 ![Scene Tree](docs/scene-tree.png)
 
+The diagram below gives an overview of the scene rendering process.
+
+![Scene Rendering](docs/scene-rendering.png)
+
 ## Coding
 
 You should read through the [Coding Patterns](./docs/patterns.md) and [Coding Conventions](./docs/conventions.md) documents.
