@@ -352,6 +352,8 @@ const content = {
   textures: {},
 };
 
+const cache = {};
+
 // Global Functions
 function assert(condition, message) {
   if (condition) {
@@ -442,12 +444,17 @@ function synchronizeScene() {
   addEnteringSceneNodesToScene();
 }
 
-function sortSceneNodesByPriority() {
-  state.scene.sort((a, b) => {
-    const aPriority = a.priority || 0;
-    const bPriority = b.priority || 0;
-    return aPriority - bPriority;
-  });
+
+function setCacheValueIfNotSetElseGetCachedValue(
+  cacheKey,
+  cacheValue,
+) {
+  if (!(cacheKey in cache)) {
+    cache[cacheKey] = cacheValue;
+  }
+  return cache[cacheKey];
+}
+
 }
 
 function sortSceneNodesByLayer() {
