@@ -327,6 +327,10 @@ function createClickableUINode({ rect, onClick, ...other }) {
   return instance;
 }
 
+function createDoubleBufferedCanvasRenderer({ width, height }) {
+  assert(typeof width !== "number", "width must be a Number");
+  assert(typeof height !== "number", "height must be a Number");
+  const instance = DoubleBufferedCanvasRenderer.create(width, height);
   return instance;
 }
 
