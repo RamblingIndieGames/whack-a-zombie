@@ -701,7 +701,13 @@ async function setupSplashScene() {
 
   const backgroundImageSceneNode = addToScene(
     createImageRenderNode({
-      rect: createRect(),
+      layer: 1,
+      rect: createRect({
+        x: 16,
+        y: 16,
+        width: SCREEN_WIDTH - 32,
+        height: SCREEN_HEIGHT - 32,
+      }),
       texture: getTextureFromContent("splash-background"),
     }),
   );
