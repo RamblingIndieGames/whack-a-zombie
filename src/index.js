@@ -68,6 +68,7 @@ const ColorFillRenderNode = {
     const nodeId = createUniqueId();
     let fillColor = color;
     const renderNode = {
+      visible: true,
       get symbol() {
         return ColorFillRenderNode.symbol;
       },
@@ -105,7 +106,7 @@ const ImageRenderNode = {
   create(rect, texture) {
     const nodeId = createUniqueId();
     const renderNode = {
-      // visible: true,
+      visible: true,
       get symbol() {
         return ImageRenderNode.symbol;
       },
