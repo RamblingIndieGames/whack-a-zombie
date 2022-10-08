@@ -170,6 +170,112 @@ const ClickableUINode = {
   },
 };
 
+const DoubleBufferedCanvasRenderer = {
+  symbol: Symbol("DoubleBufferedCanvasRenderer"),
+  create(width, height) {
+    const primaryCanvas = document.createElement("canvas");
+    const secondaryCanvas = document.createElement("canvas");
+    primaryCanvas.width = width;
+    primaryCanvas.height = height;
+    secondaryCanvas.width = width;
+    secondaryCanvas.height = height;
+    const primaryContext2D = primaryCanvas.getContext("2d");
+    const secondaryContext2D = secondaryCanvas.getContext("2d");
+    const renderer = {
+      get symbol() {
+        return DoubleBufferedCanvasRenderer.symbol;
+      },
+      get primaryCanvas() {
+        return primaryCanvas;
+      },
+      get secondaryCanvas() {
+        return secondaryCanvas;
+      },
+      get width() {
+        return width;
+      },
+      get height() {
+        return height;
+      },
+      get context() {
+        return secondaryContext2D;
+      },
+      prepare(color) {
+        console.log("prepare", { color });
+        if (color) {
+          assert(typeof color !== "string", "color must be a String");
+          secondaryContext2D.fillStyle = color;
+          secondaryContext2D.fillRect(0, 0, width, height);
+          return;
+        }
+        secondaryContext2D.clearRect(0, 0, width, height);
+      },
+      render(renderNodes) {
+        renderer.prepare();
+        const drawBatches = batchRenderNodes(renderNodes);
+        while (drawBatches.length > 0) {
+          const nextBatch = drawBatches.shift();
+          if (nextBatch) {
+            const batchLength = nextBatch.input.length;
+            for (let i = 0; i < batchLength; i++) {
+              const renderNode = nextBatch.input[i];
+              DoubleBufferedCanvasRenderer.render(
+                renderNode,
+                renderer,
+              );
+            }
+          }
+        }
+        renderer.present();
+      },
+      present() {
+        console.log("present");
+        primaryContext2D.clearRect(0, 0, width, height);
+        primaryContext2D.drawImage(secondaryCanvas, 0, 0);
+      },
+    };
+    return renderer;
+  },
+  isDoubleBufferedCanvasRenderer(renderer) {
+    return renderer.symbol === DoubleBufferedCanvasRenderer.symbol;
+  },
+  render(renderNode, renderer) {
+    const renderingMethod =
+      DoubleBufferedCanvasRenderer.renderers[renderNode.symbol];
+    assert(
+      typeof renderingMethod !== "function",
+      `Unable to render node:${renderNode.id} of type ${renderNode.type}${renderNode.subtype}`,
+    );
+    renderingMethod(renderNode, renderer);
+  },
+  renderers: {
+    [ImageRenderNode.symbol](renderNode, renderer) {
+      const { rect, texture } = renderNode;
+      renderer.context.drawImage(
+        texture.image,
+        0,
+        0,
+        texture.width,
+        texture.height,
+        rect.x,
+        rect.y,
+        rect.width,
+        rect.height,
+      );
+    },
+    [ColorFillRenderNode.symbol](renderNode, renderer) {
+      const { rect, color } = renderNode;
+      renderer.context.fillStyle = color;
+      renderer.context.fillRect(
+        rect.x,
+        rect.y,
+        rect.width,
+        rect.height,
+      );
+    },
+  },
+};
+
 // Instance Creation Functions
 function createRect(
   { x, y, width, height } = { x: 0, y: 0, width: 0, height: 0 },
