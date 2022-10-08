@@ -4,6 +4,8 @@ const SCREEN_WIDTH = 800;
 const SCREEN_HEIGHT = 600;
 
 const DEFAULT_NODE_PRIORITY = 0;
+const DEFAULT_NODE_LAYER = 0;
+
 const NODE_TYPES = {
   RenderNode: "RenderNode",
   UINode: "UINode",
