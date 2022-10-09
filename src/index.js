@@ -201,7 +201,6 @@ const DoubleBufferedCanvasRenderer = {
         return secondaryContext2D;
       },
       prepare(color) {
-        console.log("prepare", { color });
         if (color) {
           assert(typeof color !== "string", "color must be a String");
           secondaryContext2D.fillStyle = color;
@@ -229,7 +228,6 @@ const DoubleBufferedCanvasRenderer = {
         renderer.present();
       },
       present() {
-        console.log("present");
         primaryContext2D.clearRect(0, 0, width, height);
         primaryContext2D.drawImage(secondaryCanvas, 0, 0);
       },
