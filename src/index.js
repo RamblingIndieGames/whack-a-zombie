@@ -148,7 +148,9 @@ const ClickableUINode = {
   symbol: Symbol("ClickableUINode"),
   create(rect, onClick) {
     const nodeId = createUniqueId();
+    let didClick = false;
     const uiNode = {
+      enabled: true,
       get symbol() {
         return ClickableUINode.symbol;
       },
@@ -168,6 +170,14 @@ const ClickableUINode = {
         console.log("ClickableUINode.render", { rect });
       },
       update() {
+        if (uiNode.rect.containsPoint(state.mouseX, state.mouseY)) {
+          if (state.mouseButton && !didClick) {
+            didClick = true;
+          } else if (!state.mouseButton && didClick) {
+            didClick = false;
+            onClick();
+          }
+        }
         // console.log("ClickableUINode.update", { rect });
       },
     };
@@ -570,8 +580,8 @@ function mainLoop() {
 
   // TODO: uncomment this after the renderer is implemented
   // for now, just log the state for inspecting that things are working
-  console.log({ state });
-  // window.requestAnimationFrame(mainLoop);
+  // console.log({ state });
+  window.requestAnimationFrame(mainLoop);
 }
 
 function getImageDataFromImage(image) {
