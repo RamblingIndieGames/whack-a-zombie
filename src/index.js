@@ -350,6 +350,9 @@ const state = {
   lastTime: new Date().getTime(),
   elapsedTime: 0,
   deltaTime: 0,
+  mouseX: 0,
+  mouseY: 0,
+  mouseButton: false,
 };
 
 const content = {
@@ -683,6 +686,42 @@ async function setupRenderer() {
   document.getElementById("game").appendChild(renderer.primaryCanvas);
 }
 
+function getMouseCoordinateFromMouseEvent(mouseEvent) {
+  const boundingRect =
+    state.renderer.primaryCanvas.getBoundingClientRect();
+  return {
+    x: mouseEvent.clientX - boundingRect.left,
+    y: mouseEvent.clientY - boundingRect.top,
+  };
+}
+
+async function setupMouse() {
+  const mouseTarget = state.renderer.primaryCanvas;
+  mouseTarget.addEventListener(
+    "mousedown",
+    (mouseEvent) => {
+      state.mouseButton = true;
+    },
+    false,
+  );
+  mouseTarget.addEventListener(
+    "mouseup",
+    (mouseEvent) => {
+      state.mouseButton = false;
+    },
+    false,
+  );
+  mouseTarget.addEventListener(
+    "mousemove",
+    (mouseEvent) => {
+      const { x, y } = getMouseCoordinateFromMouseEvent(mouseEvent);
+      state.mouseX = x;
+      state.mouseY = y;
+    },
+    false,
+  );
+}
+
 async function setupSplashScene() {
   console.log("setup splash scene");
   const splashBackgroundTexture = await loadTexture({
@@ -745,6 +784,7 @@ async function setupTitleScene() {
 async function main() {
   console.log("Whack A Zombie - Starting");
   await setupRenderer();
+  await setupMouse();
   await setupSplashScene();
   mainLoop();
 }
