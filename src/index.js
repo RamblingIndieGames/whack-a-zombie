@@ -787,7 +787,39 @@ async function setupSplashScene() {
 }
 
 async function setupTitleScene() {
-  console.log("TODO - setup title scene");
+  console.log("setup title scene");
+  const titleBackgroundTexture = await loadTexture({
+    name: "title-background",
+    source: "content/textures/title-background.png",
+  });
+
+  addTextureToContent(titleBackgroundTexture);
+
+  const backgroundImageSceneNode = addToScene(
+    createImageRenderNode({
+      layer: 0,
+      rect: createRect({
+        x: 0,
+        y: 0,
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT,
+      }),
+      texture: getTextureFromContent("title-background"),
+    }),
+  );
+
+  async function onPlayButtonClick() {
+    removeFromScene(backgroundImageSceneNode.id);
+    removeTextureFromContent("title-background");
+    await setupPlayScene();
+  }
+
+  // TODO - implement ButtonUINode class type for Play Button
+}
+
+async function setupPlayScene() {
+  // TODO: initialize gameplay state
+  console.log("TODO - setup play scene");
 }
 
 // Entry Point Function
