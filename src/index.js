@@ -23,6 +23,14 @@ const Rect = {
       get symbol() {
         return Rect.symbol;
       },
+      containsPoint(x, y) {
+        return !(
+          x < rect.x ||
+          x > rect.x + rect.width ||
+          y < rect.y ||
+          y > rect.y + rect.height
+        );
+      },
     };
     return rect;
   },
