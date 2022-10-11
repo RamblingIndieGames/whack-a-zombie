@@ -14,6 +14,43 @@ For the game, I am thinking about an arcade style "whack a mole" themed for Hall
 - After 60 seconds, a tally of your score will be displayed along with a button to play again.
 - Clicking on play again will clear the score, reset the zombies, hearts, and begin the 3,2,1 countdown again
 
+## Simplified Engine Architecture
+
+![Engine](docs/simplified-engine.png)
+
+The _Engine_ of the project is split into two major components called the **Boot** and the **Main Loop**. When the `index.html` HTML page loads, the **Boot** is the entry point to the JavaScript runtime of the game. A sequence of tasks are performed in order to set up the _Engine_.
+
+- Load Content
+- Create Canvas
+- Attach Input Event Listeners
+- Start Main Loop
+
+The **Main Loop** is responsible for the constant updating of the game at runtime at approximately 60 updates per second.
+
+A series of quick calculations and condition checks are performed and the _System_ is updated, then the _System_ gets passed down to the current _Scene_ before repeating the process with the `requestAnimationFrame` function to call the main loop function again.
+
+## Simplified System Architecture
+
+![System](docs/simplified-system.png)
+
+The _System_ is the heart of the game _Engine_. It provides the access to the various subsystems of the game to the current _Scene_ lifecycle methods.
+
+Each time that the **Main Loop** runs, the _System_ gets updated.
+
+## Simplified Scenes Architecture
+
+![Scenes](docs/simplified-scenes.png)
+
+The game is broken down into several _Scenes_.
+
+A _Scene_ is intended to be an encapsulation of a given display of the game, such as the _title_, the _main menu_, the _main gameplay_, a _gameover_ scene, etc...
+
+A _Scene_ is responsible for managing its own localized **state** and through the three _Scene Life-Cycle_ methods `didEnter`, `didExit`, and `didUpdate`, create, destroy, and update/render any game objects related to the scene.
+
+## Coding
+
+You should read through the [Coding Patterns](./docs/patterns.md) and [Coding Conventions](./docs/conventions.md) documents.
+
 ## Architecture
 
 The game will be designed at a high level using a concept of a Scene Tree where each Node of the tree represents something that you see on the screen.
@@ -40,7 +77,3 @@ The diagram below shows the high level architecture of each scene of the game.
 The diagram below gives an overview of the scene rendering process.
 
 ![Scene Rendering](docs/scene-rendering.png)
-
-## Coding
-
-You should read through the [Coding Patterns](./docs/patterns.md) and [Coding Conventions](./docs/conventions.md) documents.
