@@ -110,12 +110,12 @@ const PlayScene = {
   // called every frame of the engine main loop
   didUpdate(system) {
     system.ctx.clearRect(0, 0, SCREEN_WIDTH, 60)
-    PlayScene.state.time = system.deltaTime
+    PlayScene.state.time += system.deltaTime
     // console.log(PlayScene.state.time)
     system.ctx.font = "40px serif"
 
     PlayScene.state.time < 59
-      ? system.ctx.fillText(Math.floor(60 - PlayScene.state.time), 350, 40)
+      ? system.ctx.fillText(Math.floor(61 - PlayScene.state.time), 350, 40)
       : system.ctx.fillText("Time's Up", 350, 40)
 
   },
@@ -233,6 +233,7 @@ async function boot() {
     const currentTime = new Date().getTime();
     const deltaTime = (currentTime - lastTime) * 0.001;
     elapsedTime += deltaTime;
+    lastTime = currentTime;
     const system = {
       deltaTime,
       elapsedTime,
@@ -255,6 +256,9 @@ async function boot() {
     if (!didRegisterScenes) {
       registerScenes(system);
       didRegisterScenes = true;
+      if (currentScene) {
+        currentScene.didEnter(system);
+      }
     }
     if (currentScene) {
       currentScene.didUpdate(system);
