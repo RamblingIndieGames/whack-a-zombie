@@ -67,7 +67,7 @@ const TitleScene = {
     didClick: false,
   },
   // called once when the engine transitions to this scene
-  didEnter(system) {},
+  didEnter(system) { },
   // called once when the engine transitions away from this scene
   didExit(system) {
     // set local state to null to free the memory usage of the local state
@@ -96,16 +96,29 @@ const TitleScene = {
 
 const PlayScene = {
   // state that is local to the scene
-  state: {},
+  state: {
+    time: 0
+  },
   // called once when the engine transitions to this scene
-  didEnter(system) {},
+  didEnter(system) {
+  },
   // called once when the engine transitions away from this scene
   didExit(system) {
     // set local state to null to free the memory usage of the local state
     PlayScene.state = null;
   },
   // called every frame of the engine main loop
-  didUpdate(system) {},
+  didUpdate(system) {
+    system.ctx.clearRect(0, 0, SCREEN_WIDTH, 60)
+    PlayScene.state.time = system.deltaTime
+    // console.log(PlayScene.state.time)
+    system.ctx.font = "40px serif"
+
+    PlayScene.state.time < 59
+      ? system.ctx.fillText(Math.floor(60 - PlayScene.state.time), 350, 40)
+      : system.ctx.fillText("Time's Up", 350, 40)
+
+  },
 };
 
 function registerScenes(system) {
