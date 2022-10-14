@@ -67,7 +67,7 @@ const TitleScene = {
     didClick: false,
   },
   // called once when the engine transitions to this scene
-  didEnter(system) { },
+  didEnter(system) {},
   // called once when the engine transitions away from this scene
   didExit(system) {
     // set local state to null to free the memory usage of the local state
@@ -96,11 +96,11 @@ const TitleScene = {
 
 const PlayScene = {
   // state that is local to the scene
-  state: {
-    time: 0
-  },
+  state: {},
   // called once when the engine transitions to this scene
   didEnter(system) {
+    PlayScene.state.time = 0;
+    PlayScene.state.PLAY_TIME_SECONDS = 60;
   },
   // called once when the engine transitions away from this scene
   didExit(system) {
@@ -109,15 +109,19 @@ const PlayScene = {
   },
   // called every frame of the engine main loop
   didUpdate(system) {
-    system.ctx.clearRect(0, 0, SCREEN_WIDTH, 60)
-    PlayScene.state.time += system.deltaTime
-    // console.log(PlayScene.state.time)
-    system.ctx.font = "40px serif"
+    system.ctx.clearRect(0, 0, SCREEN_WIDTH, 60);
+    PlayScene.state.time += system.deltaTime;
+    system.ctx.font = "40px serif";
 
-    PlayScene.state.time < 59
-      ? system.ctx.fillText(Math.floor(61 - PlayScene.state.time), 350, 40)
-      : system.ctx.fillText("Time's Up", 350, 40)
-
+    PlayScene.state.time < PlayScene.state.PLAY_TIME_SECONDS
+      ? system.ctx.fillText(
+          Math.floor(
+            PlayScene.state.PLAY_TIME_SECONDS - PlayScene.state.time,
+          ),
+          350,
+          40,
+        )
+      : system.ctx.fillText("Time's Up", 350, 40);
   },
 };
 
