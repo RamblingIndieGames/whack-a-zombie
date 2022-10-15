@@ -215,12 +215,16 @@ const PlayScene = {
     // tracks the coordinate of the mouse when the button is pressed down
     mouseX: 0,
     mouseY: 0,
+    // are we ready to play?
+    ready: false,
   },
   // called once when the engine transitions to this scene
   didEnter(system) {
+    PlayScene.state.ready = false;
     PlayScene.state.time = 0;
     PlayScene.state.PLAY_TIME_SECONDS = 60;
     PlayScene.setupGraveyard(system);
+    RSG.init();
   },
   // called once when the engine transitions away from this scene
   didExit(system) {
@@ -229,21 +233,28 @@ const PlayScene = {
   },
   // called every frame of the engine main loop
   didUpdate(system) {
-    PlayScene.handleGraveyardLogic(system);
-
-    PlayScene.state.time += system.deltaTime;
-    system.ctx.font = "40px serif";
-
-    PlayScene.drawGraveyard(system);
-    PlayScene.state.time < PlayScene.state.PLAY_TIME_SECONDS
-      ? system.ctx.fillText(
-          Math.floor(
-            PlayScene.state.PLAY_TIME_SECONDS - PlayScene.state.time,
-          ),
-          350,
-          40,
-        )
-      : system.ctx.fillText("Time's Up", 350, 40);
+    if (PlayScene.state.ready) {
+      PlayScene.state.time += system.deltaTime;
+      PlayScene.handleGraveyardLogic(system);
+      PlayScene.drawGraveyard(system);
+      PlayScene.state.time < PlayScene.state.PLAY_TIME_SECONDS
+        ? system.ctx.fillText(
+            Math.floor(
+              PlayScene.state.PLAY_TIME_SECONDS -
+                PlayScene.state.time,
+            ),
+            350,
+            40,
+          )
+        : system.ctx.fillText("Time's Up", 350, 40);
+    } else {
+      RSG.update(system.deltaTime);
+      if (!RSG.state.active) {
+        PlayScene.state.ready = true;
+      }
+      PlayScene.drawGraveyard(system);
+      RSG.draw(system.ctx);
+    }
   },
 
   setupGraveyard(system) {
