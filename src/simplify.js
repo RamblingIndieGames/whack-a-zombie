@@ -349,9 +349,9 @@ const PlayScene = {
 };
 
 function registerScenes(system) {
-  system.registerScene(SCENES.SPLASH_SCENE, SplashScene);
+  system.registerScene(SCENES.SPLASH_SCENE, SplashScene, true);
   system.registerScene(SCENES.TITLE_SCENE, TitleScene);
-  system.registerScene(SCENES.PLAY_SCENE, PlayScene, true);
+  system.registerScene(SCENES.PLAY_SCENE, PlayScene);
 }
 
 // engine internals
