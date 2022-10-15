@@ -456,6 +456,30 @@ async function boot() {
     }
   }
   let didRegisterScenes = false;
+  const cache = {};
+  function addToCache(key, value, overwrite) {
+    if (key in cache) {
+      if (overwrite) {
+        cache[key] = value;
+      }
+    } else {
+      cache[key] = value;
+    }
+  }
+  function isCached(key) {
+    return key in cache;
+  }
+  function removeFromCache(key) {
+    if (key in cache) {
+      delete cache[key];
+    }
+  }
+  function clearCache() {
+    const keys = Object.keys(cache);
+    for (const key of keys) {
+      delete cache[key];
+    }
+  }
   function mainLoop() {
     const currentTime = new Date().getTime();
     const deltaTime = (currentTime - lastTime) * 0.001;
@@ -470,6 +494,12 @@ async function boot() {
       content,
       input,
       currentScene,
+      cache: {
+        add: addToCache,
+        remove: removeFromCache,
+        has: isCached,
+        clear: clearCache,
+      },
       switchScene(sceneId) {
         if (!currentScene.exiting) {
           if (sceneId in sceneRegistry) {
