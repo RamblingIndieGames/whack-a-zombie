@@ -135,6 +135,34 @@ const GRAVE_GRID_RECT = {
   height: GRAVE_GRID_CELL_HEIGHT * GRAVE_ROW_COUNT,
 };
 
+function createComponent(
+  name,
+  state,
+  init,
+  update,
+  draw,
+  { ...other } = {},
+) {
+  const sym = Symbol(name);
+  const component = {
+    get id() {
+      return sym;
+    },
+    state: { ...state },
+    init(...extra) {
+      typeof init === "function" && init(component, ...extra);
+    },
+    update(...extra) {
+      typeof update === "function" && update(component, ...extra);
+    },
+    draw(...extra) {
+      typeof draw === "function" && draw(component, ...extra);
+    },
+  };
+  Object.assign(component, other);
+  return component;
+}
+
 const PlayScene = {
   // state that is local to the scene
   state: {
