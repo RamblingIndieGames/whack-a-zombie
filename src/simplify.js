@@ -163,6 +163,42 @@ function createComponent(
   return component;
 }
 
+const RSG = createComponent(
+  "ReadySetGo",
+  { active: true, step: 3, time: 0 },
+  (component) => {
+    component.state.active = true;
+    component.state.step = 3;
+    component.state.time = 0;
+  },
+  (component, dt) => {
+    if (component.state.active) {
+      component.state.time += dt;
+      if (component.state.time > 1) {
+        component.state.time = 0;
+        component.state.step--;
+        if (component.state.step <= 0) {
+          component.state.active = false;
+        }
+      }
+    }
+  },
+  (component, ctx) => {
+    if (component.state.active) {
+      const steps = ["", "GO!", "Get Set!", "Get Ready"];
+      const step = steps[component.state.step];
+      const colors = ["#fff", "#0a0", "#aa0", "#a00"];
+      const color = colors[component.state.step];
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(step, SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.3);
+      ctx.restore();
+    }
+  },
+);
+
 const PlayScene = {
   // state that is local to the scene
   state: {
