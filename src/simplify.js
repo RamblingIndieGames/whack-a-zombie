@@ -454,7 +454,7 @@ const PlayScene = {
         PlayScene.handleZombieGraveClick(system, collisionResult);
         break;
       case GRAVE_STATE.EMPTY:
-        PlayScene.handleEmptyGraveClick(system.collisionResult);
+        PlayScene.handleEmptyGraveClick(system, collisionResult);
         break;
       default:
         break;
