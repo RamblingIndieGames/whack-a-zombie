@@ -56,6 +56,10 @@ const CACHE_KEYS = {
 // splash scene
 
 const SplashScene = {
+  // id of current scene
+  get id() {
+    return SCENES.SPLASH_SCENE;
+  },
   // state that is local to the scene
   getInitialState() {
     return {
@@ -102,6 +106,10 @@ const SplashScene = {
 // title scene
 
 const TitleScene = {
+  // id of current scene
+  get id() {
+    return SCENES.TITLE_SCENE
+  },
   // state that is local to the scene
   getInitialState() {
     return {
@@ -176,6 +184,10 @@ const RSG = createComponent(
 );
 
 const PlayScene = {
+  // id of current scene
+  get id() {
+    return SCENES.PLAY_SCENE;
+  },
   // state that is local to the scene
   getInitialState() {
     return {
@@ -600,6 +612,10 @@ const PlayScene = {
 // lose scene
 
 const LoseScene = {
+  // id of current scene
+  get id() {
+    return SCENES.LOSE_SCENE;
+  },
   // state that is local to the scene
   getInitialState() {
     return {
@@ -658,6 +674,10 @@ const LoseScene = {
 // results scene
 
 const ResultsScene = {
+  // id of current scene
+  get id() {
+    return SCENES.RESULTS_SCENE;
+  },
   // state that is local to the scene
   getInitialState() {
     return {
