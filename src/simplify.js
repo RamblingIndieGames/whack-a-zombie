@@ -967,3 +967,177 @@ boot().catch((err) => {
   console.error(err.message);
   console.log(err);
 });
+
+async function loadFontModel(fontModelSource) {
+  const promiseLoad = () =>
+    new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", fontModelSource);
+      xhr.onerror = (err) =>
+        reject(
+          new Error(
+            `Unable to load font model from ${fontModelSource}`,
+          ),
+        );
+      xhr.onload = () => {
+        resolve(xhr.response);
+      };
+      xhr.responseType = "json";
+      xhr.send();
+    });
+  const fontModel = await promiseLoad();
+  return fontModel;
+}
+
+function BitmapFont(fontModelSource) {
+  let fontModel = null;
+  let fontStruct = {
+    pages: {
+      // each key is a page id, value is a loaded texture Image
+    },
+    glyphs: {
+      /*
+      each key is the character code (id)
+      each value is an object
+      [char.id]{
+        The left position of the character image in the texture.
+        x: char.x,
+        The top position of the character image in the texture.
+        y: char.y,
+        The width of the character image in the texture.
+        w: char.width,
+        The height of the character image in the texture.
+        h: char.height,
+        How much the current position should be offset when copying the image from the texture to the screen.
+        offset: [char.xoffset, char.yoffset],
+        How much the current position should be advanced after drawing the character.
+        advance: char.xadvance,
+        The texture page where the character image is found.
+        page: char.page
+
+      }
+      */
+    },
+  };
+
+  const font = {
+    async load() {
+      fontModel = await loadFontModel(fontModelSource);
+      const pages = Object.keys(fontModel.page).reduce(
+        (list, key) => [...list, [key, fontModel.page[key]]],
+        [],
+      );
+      for (const [page, file] of pages) {
+        const source = `content/fonts/${file}`;
+        fontStruct.pages[page] = await promiseImageLoad(source);
+      }
+      for (const chr of fontModel.chars) {
+        const glyph = {
+          x: chr.x,
+          y: chr.y,
+          w: chr.width,
+          h: chr.height,
+          offset: [chr.xoffset, chr.yoffset],
+          advance: chr.xadvance,
+          page: chr.page,
+        };
+        fontStruct.glyphs[String.fromCharCode(chr.id)] = glyph;
+      }
+    },
+
+    destroy() {
+      fontStruct.pages = null;
+      fontStruct.glyphs = null;
+      fontStruct = null;
+      fontModel = null;
+    },
+
+    measureText(text) {
+      const key = `measureText${text}`;
+
+      if (!font.cache) {
+        font.cache = {};
+      }
+
+      if (key in font.cache) {
+        return font.cache[key];
+      }
+
+      const measurements = {
+        width: 0,
+        height: 0,
+      };
+      if (!fontModel) {
+        // font has not been loaded
+        return measurements;
+      }
+      if (!fontStruct) {
+        // font was destroyed
+        return measurements;
+      }
+      for (let pos = 0; pos < text.length; pos++) {
+        const textChar = text[pos];
+        if (textChar === "\n") {
+          measurements.height += fontModel.common.lineHeight;
+        } else {
+          const glyph = fontStruct.glyphs[textChar];
+          if (glyph) {
+            measurements.width += glyph.offset[0] + glyph.advance;
+            measurements.height = Math.max(
+              measurements.height,
+              glyph.offset[1] + glyph.h,
+            );
+          }
+        }
+      }
+      font.cache[key] = measurements;
+      return measurements;
+    },
+
+    drawText(ctx, text, left = 0, top = 0) {
+      if (!fontModel) {
+        // font has not been loaded
+        return;
+      }
+      if (!fontStruct) {
+        // font was destroyed
+        return;
+      }
+
+      let penX = 0;
+      let penY = 0;
+      for (let pos = 0; pos < text.length; pos++) {
+        const textChar = text[pos];
+        if (textChar === "\n") {
+          penY += fontModel.common.lineHeight;
+          penX = 0;
+        } else {
+          const glyph = fontStruct.glyphs[textChar];
+          if (glyph) {
+            const page = fontStruct.pages[glyph.page];
+            if (page) {
+              const dx = left + penX + glyph.offset[0];
+              const dy = top + penY + glyph.offset[1];
+              const dw = glyph.w;
+              const dh = glyph.h;
+              ctx.drawImage(
+                page,
+                glyph.x,
+                glyph.y,
+                glyph.w,
+                glyph.h,
+                dx,
+                dy,
+                dw,
+                dh,
+              );
+              penX += glyph.advance;
+            }
+          }
+        }
+      }
+    },
+  };
+
+  return font;
+}
