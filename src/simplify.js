@@ -112,7 +112,7 @@ const SplashScene = {
 const TitleScene = {
   // id of current scene
   get id() {
-    return SCENES.TITLE_SCENE
+    return SCENES.TITLE_SCENE;
   },
   // state that is local to the scene
   getInitialState() {
