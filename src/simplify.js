@@ -171,18 +171,26 @@ const RSG = createComponent(
       }
     }
   },
-  (component, ctx) => {
+  (component, system) => {
     if (component.state.active) {
       const steps = ["", "GO!", "Get Set!", "Get Ready"];
       const step = steps[component.state.step];
-      const colors = ["#fff", "#0a0", "#aa0", "#a00"];
-      const color = colors[component.state.step];
-      ctx.save();
-      ctx.fillStyle = color;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(step, SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.3);
-      ctx.restore();
+
+      const measurements =
+        system.content.fonts.score.measureText(step);
+
+      const textX = Math.floor(
+        (SCREEN_WIDTH - measurements.width) * 0.5,
+      );
+
+      const textY = (SCREEN_HEIGHT - measurements.height) * 0.5;
+
+      system.content.fonts.score.drawText(
+        system.ctx,
+        step,
+        textX,
+        textY,
+      );
     }
   },
 );
@@ -270,7 +278,7 @@ const PlayScene = {
         PlayScene.state.ready = true;
       }
       PlayScene.drawGraveyard(system);
-      RSG.draw(system.ctx);
+      RSG.draw(system);
     }
   },
 
@@ -580,13 +588,22 @@ const PlayScene = {
 
   drawUITimeRemaining(system) {
     if (PlayScene.state.time < PlayScene.state.PLAY_TIME_SECONDS) {
-      system.ctx.font = "40px serif";
-      system.ctx.fillText(
-        Math.floor(
-          PlayScene.state.PLAY_TIME_SECONDS - PlayScene.state.time,
-        ),
-        350,
-        40,
+      const timeRemaining = Math.floor(
+        PlayScene.state.PLAY_TIME_SECONDS - PlayScene.state.time,
+      );
+
+      const timeRemainingText = `${timeRemaining}`;
+      const measurements =
+        system.content.fonts.timer.measureText(timeRemainingText);
+      const textX = Math.floor(
+        (SCREEN_WIDTH - measurements.width) * 0.5,
+      );
+      const textY = 16;
+      system.content.fonts.timer.drawText(
+        system.ctx,
+        timeRemainingText,
+        textX,
+        textY,
       );
     }
   },
@@ -606,10 +623,16 @@ const PlayScene = {
   },
 
   drawUICurrentScore(system) {
-    system.ctx.fillStyle = "#0f0";
-    system.ctx.font = "20px sans-serif";
     const score = PlayScene.state.score.toString(10).padStart(6, "0");
-    system.ctx.fillText(`SCORE: ${score}`, 40, 40);
+    const scoreText = `SCORE: ${score}`;
+    const textX = 16;
+    const textY = 16;
+    system.content.fonts.score.drawText(
+      system.ctx,
+      scoreText,
+      textX,
+      textY,
+    );
   },
 };
 
