@@ -39,6 +39,10 @@ const CONTENT_MANIFEST = {
     splashBackground: "content/textures/splash-background.png",
     titleBackground: "content/textures/title-background.png",
   },
+  fonts: {
+    timer: "content/fonts/timer_fontwaz.json",
+    score: "content/fonts/score_fontwaz.json",
+  },
 };
 
 const SCENES = {
