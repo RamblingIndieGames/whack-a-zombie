@@ -806,6 +806,16 @@ function promiseImageLoad(source) {
 }
 
 async function loadContent() {
+  const fontNames = Object.keys(CONTENT_MANIFEST.fonts);
+  const fonts = {};
+  const fontLoads = [];
+  for (const nextFontName of fontNames) {
+    const source = CONTENT_MANIFEST.fonts[nextFontName];
+    const font = BitmapFont(source);
+    fontLoads.push(() => font.load());
+    fonts[nextFontName] = font;
+  }
+  await Promise.all(fontLoads.map((p) => p()));
   const textureNames = Object.keys(CONTENT_MANIFEST.textures);
   const textures = {};
   for (const nextTextureName of textureNames) {
@@ -813,7 +823,7 @@ async function loadContent() {
     const texture = await promiseImageLoad(source);
     textures[nextTextureName] = texture;
   }
-  const content = { textures };
+  const content = { textures, fonts };
   return content;
 }
 
