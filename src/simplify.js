@@ -38,6 +38,7 @@ const CONTENT_MANIFEST = {
   textures: {
     splashBackground: "content/textures/splash-background.png",
     titleBackground: "content/textures/title-background.png",
+    uiHeart: "content/textures/ui-heart.png",
   },
   fonts: {
     timer: "content/fonts/timer_fontwaz.json",
@@ -613,9 +614,9 @@ const PlayScene = {
     system.ctx.fillStyle = "#a00";
     for (let i = 0; i < PlayScene.state.hearts; i++) {
       const heartX = SCREEN_WIDTH - 48 * 5 + 48 * i;
-      const heartY = 48;
-      system.ctx.fillText(
-        String.fromCodePoint(0x2764),
+      const heartY = 16;
+      system.ctx.drawImage(
+        system.content.textures.uiHeart,
         heartX,
         heartY,
       );
