@@ -532,7 +532,7 @@ const PlayScene = {
           collisionResult.graveIndex,
         );
       }
-    }, 450);
+    }, 650);
   },
 
   drawGraveyard(system) {
