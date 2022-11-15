@@ -268,11 +268,13 @@ const PlayScene = {
 
     PlayScene.setupGraveyard(system);
     PlayScene.activateZombies(system);
+    system.ctx.canvas.style.cursor = "none";
   },
   // called once when the engine transitions away from this scene
   didExit(system) {
     // set local state to null to free the memory usage of the local state
     PlayScene.state = null;
+    system.ctx.canvas.style.cursor = "initial";
   },
   // called every frame of the engine main loop
   didUpdate(system) {
@@ -280,6 +282,7 @@ const PlayScene = {
       PlayScene.handleGraveyardLogic(system);
       PlayScene.handleOutOfTimeLogic(system);
       PlayScene.drawGraveyard(system);
+      PlayScene.drawReticle(system);
       PlayScene.drawUI(system);
     } else {
       RSG.update(system.deltaTime);
@@ -287,6 +290,7 @@ const PlayScene = {
         PlayScene.state.ready = true;
       }
       PlayScene.drawGraveyard(system);
+      PlayScene.drawReticle(system);
       RSG.draw(system);
     }
   },
@@ -637,6 +641,22 @@ const PlayScene = {
         );
         break;
     }
+  },
+
+  drawReticle(system) {
+    system.ctx.fillStyle = "orange";
+    system.ctx.fillRect(
+      system.input.mouseX,
+      system.input.mouseY - 16,
+      2,
+      32,
+    );
+    system.ctx.fillRect(
+      system.input.mouseX - 16,
+      system.input.mouseY,
+      32,
+      2,
+    );
   },
 
   drawUI(system) {
