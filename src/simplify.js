@@ -39,6 +39,12 @@ const CONTENT_MANIFEST = {
     splashBackground: "content/textures/splash-background.png",
     titleBackground: "content/textures/title-background.png",
     uiHeart: "content/textures/ui-heart.png",
+    grave: "content/textures/grave.png",
+    gravestoneA: "content/textures/gravestone-a.png",
+    gravestoneB: "content/textures/gravestone-b.png",
+    gravestoneC: "content/textures/gravestone-c.png",
+    zombieNormal: "content/textures/zombie-normal.png",
+    zombieHurt: "content/textures/zombie-hurt.png",
   },
   fonts: {
     timer: "content/fonts/timer_fontwaz.json",
@@ -564,19 +570,54 @@ const PlayScene = {
     }
   },
 
-  drawGrave(system, graveState, x, y, w, h) {
+
+    system.ctx.drawImage(
+      system.content.textures.grave,
+      x,
+      y + (h - system.content.textures.grave.naturalHeight),
+    );
+
     switch (graveState) {
       case GRAVE_STATE.EMPTY:
-        system.ctx.fillStyle = "#222";
-        system.ctx.fillRect(x, y, w, h);
+        // system.ctx.fillStyle = "#222";
+        // system.ctx.fillRect(x, y, w, h);
+        // system.ctx.drawImage(
+        //   system.content.textures.grave,
+        //   x,
+        //   y + (h - system.content.textures.grave.naturalHeight),
+        // );
         break;
       case GRAVE_STATE.ZOMBIE_NORMAL:
         system.ctx.fillStyle = "#C00";
-        system.ctx.fillRect(x, y, w, h);
+        // system.ctx.fillRect(x, y, w, h);
+        system.ctx.drawImage(
+          system.content.textures.zombieNormal,
+          ~~(
+            x +
+            (w - system.content.textures.zombieNormal.naturalWidth) *
+              0.5
+          ),
+          y +
+            (h -
+              system.content.textures.zombieNormal.naturalHeight -
+              16),
+        );
         break;
       case GRAVE_STATE.ZOMBIE_DYING:
-        system.ctx.fillStyle = "#800";
-        system.ctx.fillRect(x, y, w, h);
+        // system.ctx.fillStyle = "#800";
+        // system.ctx.fillRect(x, y, w, h);
+        system.ctx.drawImage(
+          system.content.textures.zombieHurt,
+          ~~(
+            x +
+            (w - system.content.textures.zombieHurt.naturalWidth) *
+              0.5
+          ),
+          y +
+            (h -
+              system.content.textures.zombieHurt.naturalHeight -
+              16),
+        );
         break;
     }
   },
