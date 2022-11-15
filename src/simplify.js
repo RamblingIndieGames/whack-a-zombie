@@ -218,6 +218,8 @@ const PlayScene = {
       2 - grave with zombie in dying state (no penalty to click again)
       */
       graves: [],
+      // each play scene init random grave stones are chosen
+      stones: [],
       // tracks if the mouse has been pressed during the last frame and released during the current frame
       didClick: false,
       // tracks the coordinate of the mouse when the button is pressed down
@@ -296,6 +298,7 @@ const PlayScene = {
     for (let i = 0; i < GRAVE_COUNT; i++) {
       PlayScene.state.graves[i] = GRAVE_STATE.EMPTY;
       PlayScene.state.availableGraves[i] = i;
+      PlayScene.state.stones[i] = Math.floor(Math.random() * 3);
     }
   },
 
@@ -566,15 +569,29 @@ const PlayScene = {
         y,
         w,
         h,
+        i,
       );
     }
   },
 
+  drawGrave(system, graveState, x, y, w, h, graveIndex) {
+    const graveStone = PlayScene.state.stones[graveIndex];
+    const graveStoneTexture = [
+      system.content.textures.gravestoneA,
+      system.content.textures.gravestoneB,
+      system.content.textures.gravestoneC,
+    ][graveStone];
 
     system.ctx.drawImage(
       system.content.textures.grave,
       x,
       y + (h - system.content.textures.grave.naturalHeight),
+    );
+
+    system.ctx.drawImage(
+      graveStoneTexture,
+      x + 4 + ~~((w - graveStoneTexture.naturalWidth) * 0.5),
+      y + 16,
     );
 
     switch (graveState) {
