@@ -537,7 +537,7 @@ const PlayScene = {
 
   drawGraveyard(system) {
     // clear the scene to a nice blue background color
-    system.ctx.fillStyle = "#369";
+    system.ctx.fillStyle = "#1F222A";
     system.ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     // TODO - draw the graveyard background image
